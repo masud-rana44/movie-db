@@ -6,6 +6,7 @@ import { Button } from "./ui/button";
 import { Loader2 } from "lucide-react";
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
+import MovieCard from "./movie-card";
 
 export default function MovieGrid() {
   const { ref, inView } = useInView();
@@ -32,7 +33,9 @@ export default function MovieGrid() {
     <div className="space-y-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
         {data.pages.map((page) =>
-          page.results.map((movie) => <div key={movie.id}>{movie.title}</div>)
+          page.results.map((movie) => (
+            <MovieCard key={movie.id} movie={movie} />
+          ))
         )}
       </div>
 

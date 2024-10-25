@@ -21,6 +21,8 @@ export const MovieListSchema = z.object({
   total_results: z.number(),
 });
 
+export type Movie = z.infer<typeof MovieSchema>;
+
 export async function fetchMovies(page: number = 1) {
   const response = await fetch(
     `${TMDB_BASE_URL}/movie/popular?api_key=${TMDB_API_KEY}&page=${page}`,
