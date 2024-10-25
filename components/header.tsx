@@ -1,31 +1,20 @@
 "use client";
 
 import Link from "next/link";
+import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Film } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Sun, Moon, Film } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
 
 export default function Header() {
-  const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState("");
+  const { theme, setTheme } = useTheme();
 
   const { register } = useForm({
     defaultValues: {
       search: "",
     },
   });
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchQuery(value);
-
-    if (value.length >= 2) {
-      router.push(`/search?q=${encodeURIComponent(value)}`);
-    }
-  };
 
   return (
     <header className="border-b">
@@ -42,7 +31,7 @@ export default function Header() {
               placeholder="Search movies..."
               className="w-full"
               {...register("search")}
-              onChange={handleSearch}
+              onChange={(e) => console.log(e.target.value)}
             />
           </div>
 
@@ -50,6 +39,18 @@ export default function Header() {
             <Link href="/watchlist">
               <Button variant="outline">Watchlist</Button>
             </Link>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            >
+              {theme === "dark" ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </Button>
           </div>
         </div>
       </div>
