@@ -7,8 +7,20 @@ import Link from "next/link";
 import { Button } from "./ui/button";
 import { Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useWatchlist } from "@/hooks/use-watchlist";
 
 export default function MovieCard({ movie }: { movie: Movie }) {
+  const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useWatchlist();
+  const isWatchlisted = isInWatchlist(movie.id);
+
+  const handleWatchlistClick = () => {
+    if (isWatchlisted) {
+      removeFromWatchlist(movie.id);
+    } else {
+      addToWatchlist(movie);
+    }
+  };
+
   return (
     <Card className="overflow-hidden group relative">
       <CardContent className="p-0">
@@ -40,10 +52,15 @@ export default function MovieCard({ movie }: { movie: Movie }) {
             variant="outline"
             size="sm"
             className="w-full"
-            onClick={() => {}}
+            onClick={handleWatchlistClick}
           >
-            <Heart className={cn("h-4 w-4 mr-2")} />
-            {"Add to Watchlist"}
+            <Heart
+              className={cn(
+                "h-4 w-4 mr-2",
+                isWatchlisted ? "fill-current text-red-500" : ""
+              )}
+            />
+            {isWatchlisted ? "Remove" : "Add to Watchlist"}
           </Button>
         </div>
       </CardContent>
