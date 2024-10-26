@@ -8,13 +8,12 @@ import MovieDetails from "@/components/movie-details";
 import { MovieDetailsSkeleton } from "@/components/skeletons";
 import { notFound } from "next/navigation";
 
-export default async function MoviePage({
-  params,
-}: {
-  params: { id: string };
-}) {
+type tParams = Promise<{ id: string }>;
+
+export default async function MoviePage(props: { params: tParams }) {
   try {
-    const movieId = parseInt(params.id, 10);
+    const { id } = await props.params;
+    const movieId = parseInt(id);
     const [movie, credits, recommendations] = await Promise.all([
       getMovieDetails(movieId),
       getMovieCredits(movieId),
@@ -30,7 +29,7 @@ export default async function MoviePage({
         />
       </Suspense>
     );
-  } catch {
+  } catch (error) {
     notFound();
   }
 }
