@@ -14,6 +14,18 @@ export const MovieSchema = z.object({
   genre_ids: z.array(z.number()).optional(),
 });
 
+export const MovieDetailsSchema = MovieSchema.extend({
+  genres: z.array(
+    z.object({
+      id: z.number(),
+      name: z.string(),
+    })
+  ),
+  runtime: z.number(),
+  status: z.string(),
+  tagline: z.string().nullable(),
+});
+
 export const MovieListSchema = z.object({
   page: z.number(),
   results: z.array(MovieSchema),
@@ -21,7 +33,21 @@ export const MovieListSchema = z.object({
   total_results: z.number(),
 });
 
+export const CreditsSchema = z.object({
+  cast: z.array(
+    z.object({
+      id: z.number(),
+      name: z.string(),
+      character: z.string(),
+      profile_path: z.string().nullable(),
+    })
+  ),
+});
+
 export type Movie = z.infer<typeof MovieSchema>;
+export type MovieDetails = z.infer<typeof MovieDetailsSchema>;
+export type MovieList = z.infer<typeof MovieListSchema>;
+export type Credits = z.infer<typeof CreditsSchema>;
 
 export async function fetchMovies(page: number = 1) {
   const response = await fetch(
@@ -33,6 +59,54 @@ export async function fetchMovies(page: number = 1) {
 
   if (!response.ok) {
     throw new Error("Failed to fetch movies");
+  }
+
+  const data = await response.json();
+  return MovieListSchema.parse(data);
+}
+
+export async function getMovieDetails(id: number) {
+  const response = await fetch(
+    `${TMDB_BASE_URL}/movie/${id}?api_key=${TMDB_API_KEY}`,
+    {
+      next: { revalidate: 3600 },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch movie details");
+  }
+
+  const data = await response.json();
+  return MovieDetailsSchema.parse(data);
+}
+
+export async function getMovieCredits(id: number) {
+  const response = await fetch(
+    `${TMDB_BASE_URL}/movie/${id}/credits?api_key=${TMDB_API_KEY}`,
+    {
+      next: { revalidate: 3600 },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch movie credits");
+  }
+
+  const data = await response.json();
+  return CreditsSchema.parse(data);
+}
+
+export async function getMovieRecommendations(id: number) {
+  const response = await fetch(
+    `${TMDB_BASE_URL}/movie/${id}/recommendations?api_key=${TMDB_API_KEY}`,
+    {
+      next: { revalidate: 3600 },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch movie recommendations");
   }
 
   const data = await response.json();
