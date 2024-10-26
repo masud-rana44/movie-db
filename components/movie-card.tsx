@@ -22,6 +22,7 @@ export default function MovieCard({
 
   const movieGenres =
     genres?.filter((genre) => movie.genre_ids?.includes(genre.id)) || [];
+  const isHomePage = !!genres;
 
   const handleWatchlistClick = () => {
     if (isWatchlisted) {
@@ -55,7 +56,7 @@ export default function MovieCard({
         <div className="p-4 flex flex-col flex-grow">
           <h2 className="font-semibold line-clamp-1 mb-2">{movie.title}</h2>
 
-          {!!genres && (
+          {isHomePage && (
             <div className="flex flex-wrap gap-1 mb-2">
               {movieGenres.map((genre) => (
                 <Badge key={genre.id} variant="outline">
@@ -76,22 +77,24 @@ export default function MovieCard({
             </p>
           </div>
 
-          <div className="mt-auto">
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full"
-              onClick={handleWatchlistClick}
-            >
-              <Heart
-                className={cn(
-                  "h-4 w-4 mr-2",
-                  isWatchlisted ? "fill-current text-red-500" : ""
-                )}
-              />
-              {isWatchlisted ? "Remove" : "Add to Watchlist"}
-            </Button>
-          </div>
+          {!isHomePage && (
+            <div className="mt-auto">
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={handleWatchlistClick}
+              >
+                <Heart
+                  className={cn(
+                    "h-4 w-4 mr-2",
+                    isWatchlisted ? "fill-current text-red-500" : ""
+                  )}
+                />
+                {isWatchlisted ? "Remove" : "Add to Watchlist"}
+              </Button>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
