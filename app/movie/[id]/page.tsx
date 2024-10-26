@@ -14,7 +14,7 @@ export default async function MoviePage({
   params: { id: string };
 }) {
   try {
-    const movieId = parseInt(params.id);
+    const movieId = parseInt((await params).id, 10);
     const [movie, credits, recommendations] = await Promise.all([
       getMovieDetails(movieId),
       getMovieCredits(movieId),
