@@ -67,7 +67,7 @@ export default function MovieDetails({
               </p>
             )}
 
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex flex-wrap items-center gap-4 mb-6">
               <div className="flex items-center">
                 <Star className="h-5 w-5 text-yellow-500 mr-1" />
                 <span>{movie.vote_average.toFixed(1)}</span>
@@ -76,7 +76,7 @@ export default function MovieDetails({
                 <Clock className="h-5 w-5 mr-1" />
                 <span>{formatRuntime(movie.runtime)}</span>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {movie.genres.map((genre) => (
                   <Badge key={genre.id} variant="secondary">
                     {genre.name}

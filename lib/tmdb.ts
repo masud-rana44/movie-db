@@ -11,7 +11,17 @@ export const MovieSchema = z.object({
   backdrop_path: z.string().nullable(),
   release_date: z.string(),
   vote_average: z.number(),
+  vote_count: z.number(),
   genre_ids: z.array(z.number()).optional(),
+});
+
+export const GenreSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+});
+
+export const GenreListSchema = z.object({
+  genres: z.array(GenreSchema),
 });
 
 export const MovieDetailsSchema = MovieSchema.extend({
@@ -48,6 +58,8 @@ export type Movie = z.infer<typeof MovieSchema>;
 export type MovieDetails = z.infer<typeof MovieDetailsSchema>;
 export type MovieList = z.infer<typeof MovieListSchema>;
 export type Credits = z.infer<typeof CreditsSchema>;
+export type Genre = z.infer<typeof GenreSchema>;
+export type GenreList = z.infer<typeof GenreListSchema>;
 
 export async function fetchMovies(page: number = 1) {
   const response = await fetch(
@@ -59,6 +71,38 @@ export async function fetchMovies(page: number = 1) {
 
   if (!response.ok) {
     throw new Error("Failed to fetch movies");
+  }
+
+  const data = await response.json();
+  return MovieListSchema.parse(data);
+}
+
+export async function fetchGenres() {
+  const response = await fetch(
+    `${TMDB_BASE_URL}/genre/movie/list?api_key=${TMDB_API_KEY}`,
+    { next: { revalidate: 86400 } }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch genres");
+  }
+
+  const data = await response.json();
+  return GenreListSchema.parse(data);
+}
+
+export async function searchMovies(query: string, page: number = 1) {
+  const response = await fetch(
+    `${TMDB_BASE_URL}/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(
+      query
+    )}&page=${page}`,
+    {
+      next: { revalidate: 3600 },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to search movies");
   }
 
   const data = await response.json();

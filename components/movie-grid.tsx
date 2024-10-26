@@ -1,14 +1,14 @@
 "use client";
 
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { fetchMovies } from "@/lib/tmdb";
-import { Button } from "./ui/button";
-import { Loader2 } from "lucide-react";
-import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
 import MovieCard from "./movie-card";
+import { Button } from "./ui/button";
+import { Loader2 } from "lucide-react";
+import { fetchMovies, GenreList } from "@/lib/tmdb";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInView } from "react-intersection-observer";
 
-export default function MovieGrid() {
+export default function MovieGrid({ genres }: GenreList) {
   const { ref, inView } = useInView();
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
@@ -34,7 +34,7 @@ export default function MovieGrid() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
         {data.pages.map((page) =>
           page.results.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} />
+            <MovieCard key={movie.id} movie={movie} genres={genres} />
           ))
         )}
       </div>

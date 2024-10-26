@@ -5,10 +5,16 @@ import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sun, Moon, Film } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { useDebounce } from "@/hooks/use-debounce";
 
 export default function Header() {
   const { theme, setTheme } = useTheme();
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+  useDebounce(searchQuery, 500);
 
   const { register } = useForm({
     defaultValues: {
@@ -16,13 +22,22 @@ export default function Header() {
     },
   });
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+
+    if (value.length >= 2) {
+      router.push(`/search?q=${encodeURIComponent(value)}`);
+    }
+  };
+
   return (
     <header className="border-b">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-2">
             <Film className="h-6 w-6" />
-            <span className="text-xl font-bold">MovieDB</span>
+            <span className="text-xl font-bold hidden sm:block">MovieDB</span>
           </Link>
 
           <div className="flex-1 mx-4 max-w-xl">
@@ -31,7 +46,7 @@ export default function Header() {
               placeholder="Search movies..."
               className="w-full"
               {...register("search")}
-              onChange={(e) => console.log(e.target.value)}
+              onChange={handleSearch}
             />
           </div>
 

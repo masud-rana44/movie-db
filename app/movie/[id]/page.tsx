@@ -1,9 +1,11 @@
+import { Suspense } from "react";
 import {
   getMovieDetails,
   getMovieCredits,
   getMovieRecommendations,
 } from "@/lib/tmdb";
 import MovieDetails from "@/components/movie-details";
+import { MovieDetailsSkeleton } from "@/components/skeletons";
 import { notFound } from "next/navigation";
 
 export default async function MoviePage({
@@ -20,13 +22,15 @@ export default async function MoviePage({
     ]);
 
     return (
-      <MovieDetails
-        movie={movie}
-        credits={credits}
-        recommendations={recommendations}
-      />
+      <Suspense fallback={<MovieDetailsSkeleton />}>
+        <MovieDetails
+          movie={movie}
+          credits={credits}
+          recommendations={recommendations}
+        />
+      </Suspense>
     );
-  } catch (error) {
+  } catch {
     notFound();
   }
 }
