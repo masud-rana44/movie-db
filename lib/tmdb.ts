@@ -92,9 +92,7 @@ export async function fetchGenres() {
     return GenreListSchema.parse(data);
   } catch (error) {
     console.error("Error fetching genres:", error);
-    return {
-      props: { genres: [] },
-    };
+    return { genres: [] };
   }
 }
 
