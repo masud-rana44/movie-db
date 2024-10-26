@@ -78,17 +78,24 @@ export async function fetchMovies(page: number = 1) {
 }
 
 export async function fetchGenres() {
-  const response = await fetch(
-    `${TMDB_BASE_URL}/genre/movie/list?api_key=${TMDB_API_KEY}`,
-    { next: { revalidate: 86400 } }
-  );
+  try {
+    const response = await fetch(
+      `${TMDB_BASE_URL}/genre/movie/list?api_key=${TMDB_API_KEY}`,
+      { next: { revalidate: 86400 } }
+    );
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch genres");
+    if (!response.ok) {
+      throw new Error("Failed to fetch genres");
+    }
+
+    const data = await response.json();
+    return GenreListSchema.parse(data);
+  } catch (error) {
+    console.error("Error fetching genres:", error);
+    return {
+      props: { genres: [] },
+    };
   }
-
-  const data = await response.json();
-  return GenreListSchema.parse(data);
 }
 
 export async function searchMovies(query: string, page: number = 1) {
